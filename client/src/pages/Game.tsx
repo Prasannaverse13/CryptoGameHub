@@ -1,12 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GameLobby from "../components/GameLobby";
 import CoinFlip from "../components/CoinFlip";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import WalletConnect from "../components/WalletConnect";
+import { useToast } from "@/hooks/use-toast";
+import { getAccount } from "../lib/web3";
 
 export default function Game() {
+  const { toast } = useToast();
   const [gameStarted, setGameStarted] = useState(false);
+  const [account, setAccount] = useState<string | null>(null);
+
+  useEffect(() => {
+    checkConnection();
+  }, []);
+
+  const checkConnection = async () => {
+    const address = await getAccount();
+    setAccount(address);
+  };
+
+  const handleGameStart = () => {
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet to play the game",
+        variant: "destructive",
+      });
+      return;
+    }
+    setGameStarted(true);
+  };
 
   return (
     <div 
@@ -19,10 +45,15 @@ export default function Game() {
         </Button>
       </Link>
       <Card className="bg-black/70 backdrop-blur-sm border-purple-500 w-full max-w-6xl">
-        {gameStarted ? (
+        {!account ? (
+          <div className="text-center p-6">
+            <h2 className="text-xl text-purple-400 mb-4">Connect Wallet to Play</h2>
+            <WalletConnect />
+          </div>
+        ) : gameStarted ? (
           <CoinFlip onGameEnd={() => setGameStarted(false)} />
         ) : (
-          <GameLobby onGameStart={() => setGameStarted(true)} />
+          <GameLobby onGameStart={handleGameStart} />
         )}
       </Card>
     </div>
