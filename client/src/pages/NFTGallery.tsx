@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 interface NFT {
   id: number;
@@ -43,6 +45,11 @@ export default function NFTGallery() {
       className="min-h-screen bg-cover bg-center p-8"
       style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1507120410856-1f35574c3b45)' }}
     >
+      <Link href="/">
+        <Button className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+          Home
+        </Button>
+      </Link>
       <div className="max-w-6xl mx-auto">
         <Card className="bg-black/70 backdrop-blur-sm border-purple-500">
           <CardHeader>
