@@ -4,21 +4,93 @@ import { nfts, games } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(app: Express) {
-  app.get("/api/nfts", async (req, res) => {
+  const sampleNFTs = [
+    {
+      name: "Cyber Samurai",
+      image: "https://picsum.photos/400/400",
+      description: "A legendary cyber warrior",
+      price: "0.5"
+    },
+    {
+      name: "Digital Dragon",
+      image: "https://picsum.photos/401/400",
+      description: "A mythical digital beast",
+      price: "0.8"
+    },
+    {
+      name: "Neon Ninja",
+      image: "https://picsum.photos/402/400",
+      description: "Silent but deadly cyber assassin",
+      price: "0.3"
+    },
+    {
+      name: "Quantum Queen",
+      image: "https://picsum.photos/403/400",
+      description: "Ruler of the digital realm",
+      price: "1.2"
+    },
+    {
+      name: "Cyber Phoenix",
+      image: "https://picsum.photos/404/400",
+      description: "Reborn in the digital flames",
+      price: "0.9"
+    }
+  ];
+
+  // Initialize sample NFTs if none exist
+  app.get("/api/nfts/init", async (req, res) => {
     try {
-      const userNfts = await db.select().from(nfts);
-      
-      if (!Array.isArray(userNfts)) {
-        throw new Error("Invalid NFT data format");
+      const existingNFTs = await db.select().from(nfts);
+      if (existingNFTs.length === 0) {
+        const sampleNFTValues = sampleNFTs.map(nft => ({
+          tokenId: Date.now().toString(),
+          owner: "0x000000000000000000000000000000000000dEaD", // Dead address for marketplace
+          metadata: JSON.stringify(nft)
+        }));
+        
+        await db.insert(nfts).values(sampleNFTValues);
       }
-      
-      res.json(userNfts);
+      res.json({ message: "Sample NFTs initialized" });
     } catch (error) {
-      console.error("Error fetching NFTs:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch NFTs",
-        details: error instanceof Error ? error.message : "Unknown error"
-      });
+      console.error("Error initializing NFTs:", error);
+      res.status(500).json({ error: "Failed to initialize NFTs" });
+    }
+  });
+
+  app.get("/api/nfts/global", async (req, res) => {
+    try {
+      const globalNFTs = await db.select().from(nfts).where(
+        eq(nfts.owner, "0x000000000000000000000000000000000000dEaD")
+      );
+      res.json(globalNFTs);
+    } catch (error) {
+      console.error("Error fetching global NFTs:", error);
+      res.status(500).json({ error: "Failed to fetch global NFTs" });
+    }
+  });
+
+  app.get("/api/nfts/owned/:address", async (req, res) => {
+    try {
+      const ownedNFTs = await db.select()
+        .from(nfts)
+        .where(eq(nfts.owner, req.params.address));
+      res.json(ownedNFTs);
+    } catch (error) {
+      console.error("Error fetching owned NFTs:", error);
+      res.status(500).json({ error: "Failed to fetch owned NFTs" });
+    }
+  });
+
+  app.get("/api/nfts/purchased/:address", async (req, res) => {
+    try {
+      const purchasedNFTs = await db.select()
+        .from(nfts)
+        .where(eq(nfts.owner, req.params.address))
+        .where(sql`metadata::json->>'purchased' = 'true'`);
+      res.json(purchasedNFTs);
+    } catch (error) {
+      console.error("Error fetching purchased NFTs:", error);
+      res.status(500).json({ error: "Failed to fetch purchased NFTs" });
     }
   });
 
