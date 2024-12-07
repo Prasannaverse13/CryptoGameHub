@@ -6,8 +6,15 @@ declare global {
   }
 }
 
-export async function connectWallet(): Promise<string> {
+export function checkMetaMask(): boolean {
   if (!window.ethereum) {
+    return false;
+  }
+  return true;
+}
+
+export async function connectWallet(): Promise<string> {
+  if (!checkMetaMask()) {
     throw new Error("MetaMask is not installed");
   }
 
@@ -15,14 +22,37 @@ export async function connectWallet(): Promise<string> {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
+
+    // Listen for account changes
+    window.ethereum.on('accountsChanged', (accounts: string[]) => {
+      if (accounts.length === 0) {
+        // Handle disconnection
+        window.dispatchEvent(new CustomEvent('walletDisconnected'));
+      } else {
+        // Handle account change
+        window.dispatchEvent(new CustomEvent('walletAccountChanged', {
+          detail: { account: accounts[0] }
+        }));
+      }
+    });
+
+    // Listen for chain changes
+    window.ethereum.on('chainChanged', (_chainId: string) => {
+      // Handle chain change by reloading the page as recommended by MetaMask
+      window.location.reload();
+    });
+
     return accounts[0];
-  } catch (error) {
-    throw new Error("Failed to connect wallet");
+  } catch (error: any) {
+    if (error.code === 4001) {
+      throw new Error("User rejected the connection request");
+    }
+    throw new Error("Failed to connect wallet: " + (error.message || "Unknown error"));
   }
 }
 
 export async function getAccount(): Promise<string | null> {
-  if (!window.ethereum) return null;
+  if (!checkMetaMask()) return null;
 
   try {
     const accounts = await window.ethereum.request({
@@ -36,14 +66,20 @@ export async function getAccount(): Promise<string | null> {
 }
 
 export function getProvider() {
-  if (!window.ethereum) throw new Error("MetaMask is not installed");
+  if (!checkMetaMask()) throw new Error("MetaMask is not installed");
   return new ethers.BrowserProvider(window.ethereum);
 }
 
 export async function disconnectWallet(): Promise<void> {
-  // Reset the connection state
   if (window.ethereum) {
+    // Remove event listeners
+    window.ethereum.removeAllListeners('accountsChanged');
+    window.ethereum.removeAllListeners('chainChanged');
+    
     // Clear any cached provider state
     window.ethereum = null;
+    
+    // Dispatch disconnection event
+    window.dispatchEvent(new CustomEvent('walletDisconnected'));
   }
 }

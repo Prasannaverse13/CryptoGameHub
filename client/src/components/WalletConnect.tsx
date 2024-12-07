@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { connectWallet, getAccount, disconnectWallet } from "../lib/web3";
+import { connectWallet, getAccount, disconnectWallet, checkMetaMask } from "../lib/web3";
 import { useToast } from "@/hooks/use-toast";
 
 export default function WalletConnect() {
@@ -9,7 +9,33 @@ export default function WalletConnect() {
 
   useEffect(() => {
     checkConnection();
-  }, []);
+
+    // Listen for account changes
+    const handleAccountChanged = (event: CustomEvent<{ account: string }>) => {
+      setAccount(event.detail.account);
+      toast({
+        title: "Account Changed",
+        description: `Connected to ${event.detail.account.slice(0, 6)}...${event.detail.account.slice(-4)}`,
+      });
+    };
+
+    // Listen for disconnection
+    const handleDisconnected = () => {
+      setAccount(null);
+      toast({
+        title: "Wallet Disconnected",
+        description: "Wallet has been disconnected",
+      });
+    };
+
+    window.addEventListener('walletAccountChanged', handleAccountChanged as EventListener);
+    window.addEventListener('walletDisconnected', handleDisconnected);
+
+    return () => {
+      window.removeEventListener('walletAccountChanged', handleAccountChanged as EventListener);
+      window.removeEventListener('walletDisconnected', handleDisconnected);
+    };
+  }, [toast]);
 
   const checkConnection = async () => {
     const address = await getAccount();
@@ -17,19 +43,36 @@ export default function WalletConnect() {
   };
 
   const handleConnect = async () => {
+    if (!checkMetaMask()) {
+      toast({
+        title: "MetaMask Not Found",
+        description: "Please install MetaMask browser extension to connect your wallet",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const address = await connectWallet();
       setAccount(address);
       toast({
         title: "Wallet Connected",
-        description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+        description: `Successfully connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
       });
-    } catch (error) {
-      toast({
-        title: "Connection Error",
-        description: "Please install MetaMask or check your connection",
-        variant: "destructive",
-      });
+    } catch (error: any) {
+      if (error.message.includes("User rejected")) {
+        toast({
+          title: "Connection Rejected",
+          description: "You rejected the connection request",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection Error",
+          description: error.message || "Failed to connect to MetaMask",
+          variant: "destructive",
+        });
+      }
     }
   };
 
