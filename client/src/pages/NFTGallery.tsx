@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Lock } from "lucide-react";
+import { Loader2, Lock, Plus } from "lucide-react";
+import CreateNFTModal from "../components/CreateNFTModal";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import WalletConnect from "../components/WalletConnect";
@@ -18,11 +19,14 @@ interface NFT {
 interface NFTMetadata {
   name: string;
   image: string;
+  description: string;
+  price: string;
 }
 
 export default function NFTGallery() {
   const { toast } = useToast();
   const [account, setAccount] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     checkConnection();
@@ -70,6 +74,14 @@ export default function NFTGallery() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {account && (
+            <Button
+              onClick={() => setIsCreating(true)}
+              className="mb-4 bg-gradient-to-r from-purple-600 to-pink-600"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Create NFT
+            </Button>
+          )}
           {isLoading ? (
             <div className="flex justify-center items-center min-h-[200px]">
               <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
@@ -106,9 +118,14 @@ export default function NFTGallery() {
                         />
                         <h3 className="text-xl mt-2 text-purple-300">{metadata.name}</h3>
                         {account ? (
-                          <p className="text-sm text-gray-400 mt-1">
-                            Token ID: {nft.token_id}
-                          </p>
+                          <div className="space-y-1 mt-1">
+                            <p className="text-sm text-gray-400">
+                              Token ID: {nft.token_id}
+                            </p>
+                            <p className="text-sm text-purple-400">
+                              {metadata.price} ETH
+                            </p>
+                          </div>
                         ) : (
                           <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
                             <div className="text-center text-white">
@@ -126,6 +143,7 @@ export default function NFTGallery() {
           )}
         </CardContent>
       </Card>
+      <CreateNFTModal isOpen={isCreating} onClose={() => setIsCreating(false)} />
     </div>
   );
 }
