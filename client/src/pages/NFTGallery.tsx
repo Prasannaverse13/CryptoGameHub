@@ -8,6 +8,8 @@ import { Link } from "wouter";
 import WalletConnect from "../components/WalletConnect";
 import { useState, useEffect } from "react";
 import { getAccount } from "../lib/web3";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import NFTGrid from "../components/NFTGrid";
 
 interface NFT {
   id: number;
