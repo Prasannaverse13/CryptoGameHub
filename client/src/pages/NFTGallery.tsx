@@ -9,7 +9,7 @@ import WalletConnect from "../components/WalletConnect";
 import { useState, useEffect } from "react";
 import { getAccount } from "../lib/web3";
 import { ThemeProvider } from "../components/ui/theme-provider";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import NFTGrid from "../components/NFTGrid";
 import Footer from "../components/Footer";
 
