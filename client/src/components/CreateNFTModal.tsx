@@ -14,7 +14,7 @@ interface CreateNFTModalProps {
   account: string | null;
 }
 
-export default function CreateNFTModal({ isOpen, onClose }: CreateNFTModalProps) {
+export default function CreateNFTModal({ isOpen, onClose, account }: CreateNFTModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +65,15 @@ export default function CreateNFTModal({ isOpen, onClose }: CreateNFTModalProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet to create NFTs",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!formData.image || !formData.name || !formData.description || !formData.price) {
       toast({
         title: "Missing Fields",
@@ -108,6 +117,7 @@ export default function CreateNFTModal({ isOpen, onClose }: CreateNFTModalProps)
       });
       onClose();
     } catch (error) {
+      console.error("NFT creation error:", error);
       toast({
         title: "Error",
         description: "Failed to create NFT. Please try again.",
