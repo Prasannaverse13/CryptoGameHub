@@ -10,7 +10,7 @@ export default function Game() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center p-8"
+      className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
       style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1529641484336-ef35148bab06)' }}
     >
       <Link href="/">
@@ -18,15 +18,13 @@ export default function Game() {
           Home
         </Button>
       </Link>
-      <div className="max-w-6xl mx-auto">
-        <Card className="bg-black/70 backdrop-blur-sm border-purple-500">
-          {gameStarted ? (
-            <CoinFlip onGameEnd={() => setGameStarted(false)} />
-          ) : (
-            <GameLobby onGameStart={() => setGameStarted(true)} />
-          )}
-        </Card>
-      </div>
+      <Card className="bg-black/70 backdrop-blur-sm border-purple-500 w-full max-w-6xl">
+        {gameStarted ? (
+          <CoinFlip onGameEnd={() => setGameStarted(false)} />
+        ) : (
+          <GameLobby onGameStart={() => setGameStarted(true)} />
+        )}
+      </Card>
     </div>
   );
 }
