@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { db } from "../db";
 import { nfts, games } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export function registerRoutes(app: Express) {
   const sampleNFTs = [
@@ -85,8 +85,7 @@ export function registerRoutes(app: Express) {
     try {
       const purchasedNFTs = await db.select()
         .from(nfts)
-        .where(eq(nfts.owner, req.params.address))
-        .where(sql`metadata::json->>'purchased' = 'true'`);
+        .where(sql`${nfts.owner} = ${req.params.address} AND metadata::json->>'purchased' = 'true'`);
       res.json(purchasedNFTs);
     } catch (error) {
       console.error("Error fetching purchased NFTs:", error);
