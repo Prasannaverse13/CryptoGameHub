@@ -59,9 +59,8 @@ export function registerRoutes(app: Express) {
 
   app.get("/api/nfts/global", async (req, res) => {
     try {
-      const globalNFTs = await db.select().from(nfts).where(
-        eq(nfts.owner, "0x000000000000000000000000000000000000dEaD")
-      );
+      // Show all NFTs in global marketplace
+      const globalNFTs = await db.select().from(nfts);
       res.json(globalNFTs);
     } catch (error) {
       console.error("Error fetching global NFTs:", error);
@@ -71,9 +70,10 @@ export function registerRoutes(app: Express) {
 
   app.get("/api/nfts/owned/:address", async (req, res) => {
     try {
+      const address = req.params.address.toLowerCase();
       const ownedNFTs = await db.select()
         .from(nfts)
-        .where(eq(nfts.owner, req.params.address));
+        .where(sql`LOWER(${nfts.owner}) = ${address}`);
       res.json(ownedNFTs);
     } catch (error) {
       console.error("Error fetching owned NFTs:", error);
