@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 interface CreateNFTModalProps {
   isOpen: boolean;
   onClose: () => void;
+  account: string | null;
 }
 
 export default function CreateNFTModal({ isOpen, onClose }: CreateNFTModalProps) {
@@ -75,9 +76,32 @@ export default function CreateNFTModal({ isOpen, onClose }: CreateNFTModalProps)
 
     setIsLoading(true);
     try {
-      // TODO: Implement NFT creation logic
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
-      await queryClient.invalidateQueries(['nfts']);
+      // Convert image to base64
+      const reader = new FileReader();
+      const imageBase64 = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(formData.image!);
+      });
+
+      const response = await fetch('/api/nfts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          price: formData.price,
+          image: imageBase64,
+          owner: account // Get this from WalletConnect context
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create NFT');
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['nfts'] });
       toast({
         title: "NFT Created",
         description: "Your NFT has been created successfully!",

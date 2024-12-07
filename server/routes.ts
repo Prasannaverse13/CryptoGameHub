@@ -44,4 +44,22 @@ export function registerRoutes(app: Express) {
       res.status(500).json({ error: "Failed to save game" });
     }
   });
+
+  app.post("/api/nfts", async (req, res) => {
+    try {
+      const { name, description, price, image, owner } = req.body;
+      const metadata = JSON.stringify({ name, description, price, image });
+      
+      const newNft = await db.insert(nfts).values({
+        tokenId: Date.now().toString(), // Simple tokenId generation
+        owner,
+        metadata
+      }).returning();
+      
+      res.json(newNft[0]);
+    } catch (error) {
+      console.error("Error creating NFT:", error);
+      res.status(500).json({ error: "Failed to create NFT" });
+    }
+  });
 }

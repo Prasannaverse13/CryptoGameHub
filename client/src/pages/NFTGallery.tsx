@@ -143,7 +143,7 @@ export default function NFTGallery() {
           )}
         </CardContent>
       </Card>
-      <CreateNFTModal isOpen={isCreating} onClose={() => setIsCreating(false)} />
+      <CreateNFTModal isOpen={isCreating} onClose={() => setIsCreating(false)} account={account} />
     </div>
   );
 }
