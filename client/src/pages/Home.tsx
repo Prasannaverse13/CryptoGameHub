@@ -8,12 +8,14 @@ import {
 import { Menu } from "lucide-react";
 import WalletConnect from "../components/WalletConnect";
 import { Link } from "wouter";
+import { ThemeProvider } from "../components/ui/theme-provider";
 
 export default function Home() {
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
-      style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476445704028-a36e0c798192)' }}
+    <ThemeProvider>
+      <div 
+        className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476445704028-a36e0c798192)' }}
     >
       <div className="absolute top-4 right-4">
         <DropdownMenu>
@@ -91,5 +93,6 @@ export default function Home() {
         </Card>
       </div>
     </div>
+    </ThemeProvider>
   );
 }
