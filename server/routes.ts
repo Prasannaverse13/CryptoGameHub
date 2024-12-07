@@ -7,9 +7,18 @@ export function registerRoutes(app: Express) {
   app.get("/api/nfts", async (req, res) => {
     try {
       const userNfts = await db.select().from(nfts);
+      
+      if (!Array.isArray(userNfts)) {
+        throw new Error("Invalid NFT data format");
+      }
+      
       res.json(userNfts);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch NFTs" });
+      console.error("Error fetching NFTs:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch NFTs",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
