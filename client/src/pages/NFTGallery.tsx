@@ -11,6 +11,7 @@ import { getAccount } from "../lib/web3";
 import { ThemeProvider } from "../components/ui/theme-provider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
 import NFTGrid from "../components/NFTGrid";
+import Footer from "../components/Footer";
 
 interface NFT {
   id: number;
@@ -77,7 +78,7 @@ export default function NFTGallery() {
   return (
     <ThemeProvider>
       <div 
-        className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
+        className="relative min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
         style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1507120410856-1f35574c3b45)' }}
       >
         <Link href="/">
@@ -158,6 +159,7 @@ export default function NFTGallery() {
           </CardContent>
         </Card>
         <CreateNFTModal isOpen={isCreating} onClose={() => setIsCreating(false)} account={account} />
+      <Footer />
       </div>
     </ThemeProvider>
   );

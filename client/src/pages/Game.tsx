@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import WalletConnect from "../components/WalletConnect";
 import { useToast } from "@/hooks/use-toast";
 import { getAccount } from "../lib/web3";
+import Footer from "../components/Footer";
 
 export default function Game() {
   const { toast } = useToast();
@@ -36,7 +37,7 @@ export default function Game() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
+      className="relative min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
       style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1529641484336-ef35148bab06)' }}
     >
       <Link href="/">
@@ -56,6 +57,7 @@ export default function Game() {
           <GameLobby onGameStart={handleGameStart} />
         )}
       </Card>
+      <Footer />
     </div>
   );
 }
