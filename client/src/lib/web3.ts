@@ -39,3 +39,11 @@ export function getProvider() {
   if (!window.ethereum) throw new Error("MetaMask is not installed");
   return new ethers.BrowserProvider(window.ethereum);
 }
+
+export async function disconnectWallet(): Promise<void> {
+  // Reset the connection state
+  if (window.ethereum) {
+    // Clear any cached provider state
+    window.ethereum = null;
+  }
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { connectWallet, getAccount } from "../lib/web3";
+import { connectWallet, getAccount, disconnectWallet } from "../lib/web3";
 import { useToast } from "@/hooks/use-toast";
 
 export default function WalletConnect() {
@@ -33,11 +33,36 @@ export default function WalletConnect() {
     }
   };
 
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet();
+      setAccount(null);
+      toast({
+        title: "Wallet Disconnected",
+        description: "Successfully disconnected your wallet",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to disconnect wallet",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       {account ? (
-        <div className="text-green-400">
-          Connected: {account.slice(0, 6)}...{account.slice(-4)}
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-green-400">
+            Connected: {account.slice(0, 6)}...{account.slice(-4)}
+          </div>
+          <Button
+            onClick={handleDisconnect}
+            className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700"
+          >
+            Disconnect Wallet
+          </Button>
         </div>
       ) : (
         <Button
