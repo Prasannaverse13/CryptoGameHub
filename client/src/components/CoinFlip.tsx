@@ -55,6 +55,12 @@ export default function CoinFlip({ onGameEnd }: CoinFlipProps) {
         title: "You won!",
         description: "NFT reward is being minted...",
       });
+    } else {
+      toast({
+        title: "You lost!",
+        description: "Better luck next time!",
+        variant: "destructive",
+      });
     }
   };
 
