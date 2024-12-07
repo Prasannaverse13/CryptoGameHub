@@ -6,10 +6,10 @@ import { Link } from "wouter";
 export default function Home() {
   return (
     <div 
-      className="min-h-screen bg-cover bg-center p-8"
+      className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
       style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476445704028-a36e0c798192)' }}
     >
-      <div className="max-w-6xl mx-auto mt-20">
+      <div className="max-w-6xl mx-auto">
         <Card className="bg-black/70 backdrop-blur-sm border-purple-500">
           <CardHeader>
             <CardTitle className="text-4xl text-center text-purple-400">
@@ -30,6 +30,21 @@ export default function Home() {
                   NFT Gallery
                 </Button>
               </Link>
+            </div>
+
+            <div className="mt-8 space-y-4">
+              <h2 className="text-2xl text-purple-400 font-bold">How to Play</h2>
+              <div className="grid grid-cols-1 gap-4 text-gray-300">
+                <div className="space-y-2">
+                  <h3 className="text-xl text-purple-300">CyberFlip Game</h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Connect your wallet using MetaMask</li>
+                    <li>Each flip costs 0.01 ETH</li>
+                    <li>Win NFT rewards for correct guesses</li>
+                    <li>Your NFTs will appear in the NFT Gallery</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
