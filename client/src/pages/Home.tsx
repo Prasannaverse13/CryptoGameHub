@@ -9,7 +9,7 @@ export default function Home() {
       className="min-h-screen bg-cover bg-center p-8"
       style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476445704028-a36e0c798192)' }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto mt-20">
         <Card className="bg-black/70 backdrop-blur-sm border-purple-500">
           <CardHeader>
             <CardTitle className="text-4xl text-center text-purple-400">
