@@ -102,20 +102,6 @@ CyberGame Hub is a cyberpunk-themed blockchain gaming platform that combines cas
 - GMP SDK
 - Analog Watch SDK
 
-## Project Structure
-```
-├── client/
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── pages/        # Page components
-│   │   ├── lib/          # Utilities and configurations
-│   │   └── hooks/        # Custom React hooks
-├── server/
-│   ├── routes/          # API endpoints
-│   └── db/             # Database configurations
-└── contracts/          # Smart contracts (if applicable)
-```
-
 ## Contributing
 
 This project was created for hackathon purposes. Feel free to fork and modify according to your needs.
